@@ -23,7 +23,7 @@ firebase = pyrebase.initialize_app({
     "authDomain": "dogecall-ef1a1.firebaseapp.com",
     "databaseURL": "https://dogecall-ef1a1.firebaseio.com ",
     "storageBucket": "dogecall-ef1a1.appspot.com",
-    "serviceAccount": "./dogecall-web/json/serviceAccountKey.json"
+    "serviceAccount": "./json/serviceAccountKey.json"
 })
 
 auth = firebase.auth()
@@ -51,15 +51,15 @@ def write_to_mysql(dataframe, connection, table_name):
         connection.commit()
 
 #load all models
-pickle_path = ('./dogecall-web/models/churnerModel.pkl')
+pickle_path = ('./models/churnerModel.pkl')
 with open(pickle_path, 'rb') as f:
     churners_segm_model = pickle.load(f)
 
-pickle_path = ('./dogecall-web/models/nonChurnerModel.pkl')
+pickle_path = ('./models/nonChurnerModel.pkl')
 with open(pickle_path, 'rb') as f:
     non_churners_segm_model = pickle.load(f)
 
-pickle_path = ('./dogecall-web/models/predict.pkl')
+pickle_path = ('./models/predict.pkl')
 with open(pickle_path, 'rb') as f:
     pred_model = pickle.load(f)
 
@@ -291,7 +291,7 @@ def prediction():
                             'Total Charges': 'TotalCharges',
                             }, inplace=True)
         
-        df.to_excel('./dogecall-web/predictions/churnPrediction.xlsx', index=False) 
+        df.to_excel('./predictions/churnPrediction.xlsx', index=False) 
 
         #write data to mysql server
         write_to_mysql(df, db, 'customer')
@@ -332,7 +332,7 @@ def download_nonSegChurners():
 
 @app.route('/download/predictions')
 def download_predictions():
-    return send_file('.\\predictions\\churnPrediction.xlsx', as_attachment=True)
+    return send_file('./predictions/churnPrediction.xlsx', as_attachment=True)
 
 #run flask app
 if __name__ == '__main__':
