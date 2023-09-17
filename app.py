@@ -34,7 +34,7 @@ db = mysql.connector.connect(
     port = 3306,
     database = "dogecall",
     user = "root",
-    password = "root"
+    password = "rootroot"
 )
 cursor = db.cursor()
 
