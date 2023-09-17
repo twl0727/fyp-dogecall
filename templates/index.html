@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>DogeCall Telco</title>
+<link rel="icon" type="image/x-icon" href="../static/images/dogecall-logo.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<style>
+h1, p {
+    font-family: "Raleway", sans-serif;
+    font-weight: bold;
+}
+html, body {
+    display: flex;
+    justify-content: center;
+    font-family: "Raleway", sans-serif;
+    font-size: 15px;
+    background-image: url(../static/images/dogecall-bg.png);
+    min-height: 100%;
+    background-position: center;
+    background-size: cover;
+}
+.form {
+    border: 5px solid #f1f1f1;
+    margin: 60px;
+}
+.container > form > input[type=text], input[type=password] {
+    width: 100%;
+    padding: 16px 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+button {
+    background-color: #E7D6C2;
+    color: #A65B00;
+    font-weight: bolder;
+    font-size: 20px;
+    padding: 14px 0;
+    margin: 10px 0;
+    border: #A65B00 2px solid;
+    cursor: grabbing;
+    width: 100%;
+}
+button:hover {
+    opacity: 0.8;
+}
+.formcontainer {
+    text-align: left;
+    margin: 24px 50px 12px;
+}
+.formcontainer > img{
+    float: right;
+    width: 40%;
+    margin-bottom: 20px;
+}
+.container {
+    padding: 16px 0;
+    text-align:left;
+}
+</style>
+</head>
+<body>
+    <div class="form">
+        <div class="formcontainer">
+            <img src="../static/images/dogecall-logo.png" alt="This is a DogeCall Logo">
+            <h1>DogeCall Employee</h1>
+            <p>Please enter your credentials below.</p>
+            <hr>
+            <div class="container">
+                <form action="/auth" method="post" id="signInForm">
+                    <input type="text" id="email" name="email" placeholder="Email"/>
+                    <input type="password" id="password" name="password" placeholder="Password"/>
+                    <br/><br/>
+                    {% if error %}
+                        <p style="color: red;">{{ error }}</p>
+                    {% endif %}
+                    <button type="submit" name="signin">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DogeCall Telco</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="../static/images/dogecall-logo.png"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Raleway"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      body,h1,h2,h3,h4,h5,h6 {
+        font-family: "Raleway", sans-serif;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      a:hover {
+        color: #2e2a26;
+      }
+      .column {
+        float: left;
+        width: 33.33%;
+        padding: 5px;
+      }
+
+      /* Clear floats after image containers */
+      .row::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+      .container {
+        overflow: hidden;
+      }
+
+      .filterDiv {
+        width: 95%;
+        margin: 2px;
+        display: none; /* Hidden by default */
+      }
+
+      /* The "show" class is added to the filtered elements */
+      .show {
+        display: block;
+      }
+
+      /* Style the buttons */
+      .btn {
+        border: none;
+        outline: none;
+        padding: 12px 16px;
+        background-color: #f1f1f1;
+        cursor: pointer;
+      }
+
+      /* Add a light grey background on mouse-over */
+      .btn:hover {
+        background-color: #ddd;
+      }
+
+      /* Add a dark background to the active button */
+      .btn.active {
+        background-color: #666;
+        color: white;
+      }
+      table tr > td > img{
+        width: 155px;
+        height: 165px;
+        margin: 15px;
+      }
+    </style>
+  </head>
+  <body class="w3-light-grey w3-content" style="max-width: 1600px">
+   <!-- Sidebar/menu -->
+   <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
+    <div class="w3-container">
+      <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-padding w3-hover-grey" title="close menu">
+        <i class="fa fa-remove"></i>
+      </a><br><br>
+        <div class="row">
+          <div class="column">
+            <img src="../static/images/dogecall-logo.png" alt="DogeCall Logo" style="width:100%">
+          </div>
+          <div class="column">
+            <h1 style="width:100%; font-weight: bolder;">DogeCall</h1>
+          </div>
+        </div>
+        <hr>
+        {% if img_url != null %}
+        <img src="{{ img_url }}" alt="User Profile Picture" style="width:50%;">
+        {% else %}
+        <img src="/static/images/default-profile-pic.png" alt="User Profile Picture" style="width:50%;" >
+        {% endif %}
+        <br /><br />
+        <h4 class="welcome-msg">Welcome {{ session["displayName"] }}</h4>
+      </div>
+      <div class="w3-bar-block">
+        <a href="/dashboard" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-th-large fa-fw w3-margin-right"></i>DASHBOARD</a> 
+        <a href="/userProfile" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user fa-fw w3-margin-right"></i>PROFILE</a> 
+        <a href="/segmentation" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">CUSTOMER SEGMENTATION</a>
+        <a href="/prediction" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">CUSTOMER CHURN PREDICTION</a>
+        <a href="/sentiment" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">SENTIMENT ANALYSIS</a><br><br>
+        <a href="/signOut" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"></i>Sign Out</a> 
+      </div>
+    </nav>
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div
+      class="w3-overlay w3-hide-large w3-animate-opacity"
+      onclick="w3_close()"
+      style="cursor: pointer"
+      title="close side menu"
+      id="myOverlay"
+    ></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left: 300px">
+      <!-- Header -->
+      <header id="portfolio">
+        <span class="w3-button w3-hide-large w3-xxlarge w3-hover-text-grey" onclick="w3_open()"><i class="fa fa-bars"></i></span> 
+        <div class="w3-container w3-bottombar w3-margin-bottom w3-center">
+          <h1><b>Customer Segmentation</b></h1>
+          <p>Have a clear segmentation of your customers!</p>
+        </div>
+      </header>
+
+      <!-- Pagination -->
+      <div class="w3-padding-32 w3-margin">
+        <h3 class="w3-bottombar">Customer Segments and its Characteristics</h3><br>
+        <!-- Control buttons -->
+        <div id="myBtnContainer">
+          <button class="btn active" onclick="filterSelection('all')"> Show all</button>
+          <button class="btn" onclick="filterSelection('churners')"> Churner Customers</button>
+          <button class="btn" onclick="filterSelection('non')"> Non-Churner Customers</button>
+        </div><br><br>
+
+        <!-- The filterable elements. Note that some have multiple class names (this can be used if they belong to multiple categories) -->
+        <div class="container">
+          <div class="filterDiv churners">
+            <div class="w3-centered w3-table-all" style=" margin: auto; width: 50%;">
+              {% if churnerTable %}
+                <h3>The Churner Customers Data have been clustered properly as shown below.</h3>
+                {{ churnerTable|safe }}
+                <br><p>It will be updated to the visualization dashboard accordingly.</p>
+              {% endif %}
+            </div>
+            <div class="w3-center">
+              {% if churnerTable %}
+                <button class="w3-button w3-black w3-margin-bottom w3-margin-top"><a href="{{ url_for('download_segChurners', filename='segChurners.xlsx') }}" download>Download the Churners Segmented Results</a></button>
+              {% endif %}
+            </div>
+            <table class="w3-table-all">
+              <tr>
+                <th>Churner Segment Names</th>
+                <th>Characteristics</th>
+                <th>Suggested Marketing Startegy</th>
+              </tr>
+              <tr>
+                <td><h4>The Economical Explorer</h4><br> 
+                  <img src="../static/images/economical-explorers.png" alt="The Economical Explorer">
+                </td>
+                <td>
+                  <ul>
+                    <li>Moderate CLTV Cluster</li>
+                    <li>They are likely to seek cost-effective telco subscriptions.</li>
+                    <li>Their low monthly spending suggests their mindful trait in spending.</li>
+                    <li>Their average tenure suggests that they are still exploring different telco subscriptions.</li>
+                  </ul>
+                </td>
+                <td>
+                  <p>Highlights the need to promote more cost-effective telco service packages and exploration of new subscription deals.</p>
+                  <h6>Promotional Marketing</h6>
+                  <ul>
+                    <li>offers affordable plans with promotional discounts for those who subscribe within that period of time.</li>
+                    <li>emphasize on competitive pricing between different telco subscriptions and the current one.</li>                
+                  </ul>      
+                  <h6>Freebie Marketing</h6>         
+                  <ul>
+                    <li>offers them free trials on new telco services packages to encourage them to explore with confidence.</li>
+                    <li>include free gifts to them when they sign up for a subscription plan.</li>
+                  </ul>
+                </td>           
+              </tr>
+              <tr>
+                <td><h4>The Loyal High-Value Enthusiasts</h4><br>
+                  <img src="../static/images/loyal-high-value-enthusiasts.png" alt="The Loyal High-Value Enthusiasts">
+                </td>
+                <td>
+                  <ul>
+                    <li>Significantly high CLTV Cluster which can contribute to the company's revenue.</li>
+                    <li>They are willing to and enthusiastic about premium telco services.</li>
+                    <li>Despite having high tenure months with the telco service, they still churn due to several reasons.</li>
+                    <li>A significant cluster that requires more attention to keep them from churning.</li>
+                    <li>They seek and appreciate exclusive benefits and premium experience from the company.</li>
+                  </ul>
+                </td>    
+                <td>
+                  <p>Highlights the need to reward their continued loyalty.</p>
+                  <h6>Loyalty Enhancement</h6>
+                  <ul>                    
+                    <li>provide exclusive benefits and top-tier telco deals to enhance their overall experience.</li>
+                    <li>offer loyalty programs, VIP access and early access to new telco features so that they continue to stay loyal and not churn.</li>
+                  </ul>    
+                  <h6>Community Marketing</h6>
+                  <ul>
+                    <li>organize engagements to seek feedback on improving the services and show appreciation to them if they continue to stay loyal.</li>
+                  </ul>           
+                </td>                 
+              </tr>
+              <tr>
+                <td><h4>The Short-Lived Moderate Spenders</h4><br>
+                  <img src="../static/images/short-lived-moderate-users.png" alt="The Short-Lived Moderate Spenders">
+                </td>
+                <td>
+                  <ul>
+                    <li>Lowest CLTV Cluster</li>
+                    <li>They may have joined with high expectations but found no long-term value with the telco service.</li>
+                    <li>They might be potential high-valued customers if they stayed loyal due to their high monthly spending.</li>
+                  </ul>
+                </td>
+                <td>
+                  <p>Highlights the need to educate them on the benefits they may have overlooked during their short tenure.</p>
+                  <h6>Educational Marketing</h6>
+                  <ul>
+                    <li>provide tutorial contents to educate customers on how to maximize their usage and introduce them to more hidden benefits.</li>
+                    <li>highlight long-term benefits and offer incentives to extend their subscription such as loyalty discounts.</li>
+                  </ul>     
+                  <h6>Community Marketing</h6>          
+                  <ul>
+                    <li>engaging long-term customers into the community to share their stories and testimonials with the telco services.</li>
+                    <li>organize engagement events to promote loyalty activities and rewards collections.</li>
+                  </ul>
+                </td>  
+              </tr>
+            </table><br>
+            <form action="/segmentation" method="post" enctype="multipart/form-data">            
+              <input type="hidden" name="type" value="segChurnersData">
+              <input type="file" name="file" accept=".xlsx,.xls,.csv"><br>
+              <button class="w3-button w3-black w3-margin-bottom w3-margin-top" type="submit">Upload and Segment the Churners</button><br><br>
+            </form>
+          </div>
+          <div class="filterDiv non">
+            <div class="w3-centered w3-table-all" style=" margin: auto; width: 50%;">
+              {% if nonChurnerTable %}
+                <h3>The Non-Churner Customers Data have been clustered properly as shown below.</h3>
+                {{ nonChurnerTable|safe }}
+                <br><p>It will be updated to the visualization dashboard accordingly.</p>
+              {% endif %}
+            </div>
+            <div class="w3-center">      
+              {% if nonChurnerTable %}
+                <button class="w3-button w3-black w3-margin-bottom w3-margin-top"><a href="{{ url_for('download_nonSegChurners', filename='nonSegChurners.xlsx') }}" download>Download the Non-Churners Segmented Results</a></button>
+              {% endif %}
+            </div>
+            <table class="w3-table-all">
+              <tr>
+                <th>Non-Churners Segment Names</th>
+                <th>Characteristics</th>
+                <th>Suggested Marketing Startegy</th>
+              </tr>
+              <tr>
+                <td><h4>The Budget Conscious</h4><br>
+                  <img src="../static/images/budget-conscious.jpg" alt="The Budget Conscious">
+                </td>
+                <td>
+                  <ul>
+                    <li>Lowest CLTV Cluster</li>
+                    <li>They are price-sensitive and prioritize cost-saving over long-term loyalty.</li>
+                    <li>They have a high likelihood of churning if they find better telco service deals elsewhere.</li>
+                  </ul>
+                </td>    
+                <td>
+                  <p>Highlights the need to promote affordability and long-term benefits.</p>
+                  <h6>Promotional Marketing</h6>
+                  <ul>
+                    <li>offer budget-friendly telco services plans such as discounted telco bundles.</li>
+                    <li>introduce flexible payment options for the telco subscription.</li>
+                  </ul>    
+                  <h6>Community Marketing</h6>
+                  <ul>
+                    <li>launch referral programs to provide additional discounts on each successful referral.</li>
+                    <li>engage high-valued customers as testimonials to showcase their loyalty benefits.</li>
+                  </ul>           
+                </td>              
+              </tr>
+              <tr>
+                <td><h4>The Moderate Users</h4><br>
+                  <img src="../static/images/moderate-user.jpg" alt="The Moderate Users">
+                </td>
+                <td>
+                  <ul>
+                    <li>Moderate CLTV Cluster</li>
+                    <li>Moderate monthly spending and medium tenure.</li>
+                    <li>They have a balanced approach in utilizing their subscription package by not being excessively high spenders.</li>
+                  </ul>
+                </td>
+                <td>
+                  <p>Highlights the need to educate them on the benefits they may have overlooked during their short tenure.</p>
+                  <h6>Upselling Marketing</h6>
+                  <ul>
+                    <li>encourage them to experience better telco subscriptions to cater to their increasing usage and needs.</li>
+                    <li>this can be a stepping stone for them to start subscribing to higher-end plans.</li>
+                  </ul>      
+                  <h6>Cross-Selling Marketing</h6>         
+                  <ul>
+                    <li>requires market basket analysis to suggest customers to subscription to additional services that are similar to their current one so that they can enhance their experience and usage.</li>
+                  </ul>
+                </td>                  
+              </tr>
+              <tr>
+                <td><h4>The Premium Lifers</h4><br>
+                  <img src="../static/images/premium-lifers.png" alt="The Premium Lifers">
+                </td>
+                <td>
+                  <ul>
+                    <li>Highest CLTV Cluster </li>
+                    <li>High monthly spending and long tenure with the company.</li>
+                    <li>They are a valuable asset to the company due to their consistent loyalty in subscribing to the telco service as well as having high spending.</li>
+                  </ul>
+                </td>
+                <td>
+                  <h6>Exceptional Customer Service</h6>
+                  <p>Highlights the need to prioritize their needs and wants with the telco service.</p>
+                  <ul>
+                    <li>Crucial to reinforce their perception of the company as a premium telco service provider.</li>
+                    <li>Exclusive offers as appreciation for loyalty and premium upgrade services.</li>
+                  </ul>               
+                </td> 
+              </tr>
+              <tr>
+                <td><h4>The Seasoned Explorer</h4><br>
+                  <img src="../static/images/seasoned-explorers.png" alt="The Seasoned Explorer">            
+                </td>
+                <td>
+                  <ul>
+                    <li>Relatively high CLTV Cluster</li>
+                    <li>They have been subscribing to the telco service for a white but their lower spending suggests that they are exploring different deals.</li>
+                    <li>They may have diverse interests to try different telco deals.</li>
+                  </ul>
+                </td>
+                <td>
+                  <h6>Promotional Marketing and Diverse Offerings</h6>
+                  <p>Highlights the need to emphasize on the variety of telco services packages and promote new features.</p>
+                  <ul>
+                    <li>Offer different special discounts to try and explore new packages to foster their interest in other packages.</li>
+                    <li>Create a plan to come out with different varieties of packages as well as personalized recommendations based on usage history and preferences.</li>
+                  </ul>               
+                </td>
+              </tr>
+            </table><br>
+            <form action="/segmentation" method="post" enctype="multipart/form-data">
+              <input type="hidden" name="type" value="segNonChurnersData">
+              <input type="file" name="file" accept=".xlsx,.xls,.csv"><br>
+              <button class="w3-button w3-black w3-margin-bottom w3-margin-top" type="submit">Upload and Segment the Non-Churners</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Contact Section -->
+      <div
+        class="w3-container w3-padding-large"
+        style="background-color: #edeae6"
+      >
+        <h4 id="contact"><b>Contact The Admin</b></h4>
+        <p>
+          Encounter some problem with DogeCall Employee System? Don't hesitate
+          to contact us.
+        </p>
+        <div
+          class="w3-row-padding w3-center w3-padding-24"
+          style="margin: 0 -16px; color: white"
+        >
+          <div class="w3-third" style="background-color: #7f7b74">
+            <p><i class="fa fa-envelope w3-xxlarge w3-text-light-grey"></i></p>
+            <p>
+              <a href="mailto: dogecall_telco@gmail.com"
+                >dogecall_telco@gmail.com</a
+              >
+            </p>
+          </div>
+          <div class="w3-third" style="background-color: #beb1a9;">
+            <p>
+              <i class="fa fa-map-marker w3-xxlarge w3-text-light-grey"></i>
+            </p>
+            <p>Kuala Lumpur, Malaysia</p>
+          </div>
+          <div class="w3-third" style="background-color: #7f7b74">
+            <p><i class="fa fa-phone w3-xxlarge w3-text-light-grey"></i></p>
+            <p><a href="tel:+603-6587 7433">03-6587 7433</a></p>
+          </div>
+        </div>
+        <hr class="w3-opacity" />
+      </div>
+
+      <!-- Footer -->
+      <footer
+        class="w3-container w3-padding-32" style="background-color: #dbd9d5">
+        <div class="w3-third">
+          <h3>ABOUT US</h3>
+          <p>
+            DogeCall is a Telcommunication Company specializing in providing
+            subscription service to customers with privilleged member benefits.
+          </p>
+        </div>
+
+        <div>
+          <h3>POPULAR TAGS</h3>
+          <p>
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#ShibaInu</span
+            >
+            <span class="w3-tag w3-grey w3-small w3-margin-bottom"
+              >#DogeCall</span
+            >
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#Elon Musk</span
+            >
+            <span class="w3-tag w3-grey w3-small w3-margin-bottom">#Telco</span>
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#CustomerDashboards</span
+            >
+            <span class="w3-tag w3-grey w3-small w3-margin-bottom"
+              >#ExpandBusiness</span
+            >
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#LoveYourCustomers</span
+            >
+          </p>
+        </div>
+      </footer>
+
+      <div
+        class="w3-center w3-padding-16"
+        style="background-color: #2e2a26; color: white"
+      >
+        <b>Brought to you by: </b> Data Science FYP Project
+      </div>
+
+      <!-- End page content -->
+    </div>
+
+    <script>
+      // Script to open and close sidebar
+      function w3_open() {
+        document.getElementById("mySidebar").style.display = "block";
+        document.getElementById("myOverlay").style.display = "block";
+      }
+
+      function w3_close() {
+        document.getElementById("mySidebar").style.display = "none";
+        document.getElementById("myOverlay").style.display = "none";
+      }
+      filterSelection("all")
+      function filterSelection(c) {
+        var x, i;
+        x = document.getElementsByClassName("filterDiv");
+        if (c == "all") c = "";
+        // Add the "show" class (display:block) to the filtered elements, and remove the "show" class from the elements that are not selected
+        for (i = 0; i < x.length; i++) {
+          w3RemoveClass(x[i], "show");
+          if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+        }
+      }
+
+      // Show filtered elements
+      function w3AddClass(element, name) {
+        var i, arr1, arr2;
+        arr1 = element.className.split(" ");
+        arr2 = name.split(" ");
+        for (i = 0; i < arr2.length; i++) {
+          if (arr1.indexOf(arr2[i]) == -1) {
+            element.className += " " + arr2[i];
+          }
+        }
+      }
+
+      // Hide elements that are not selected
+      function w3RemoveClass(element, name) {
+        var i, arr1, arr2;
+        arr1 = element.className.split(" ");
+        arr2 = name.split(" ");
+        for (i = 0; i < arr2.length; i++) {
+          while (arr1.indexOf(arr2[i]) > -1) {
+            arr1.splice(arr1.indexOf(arr2[i]), 1);
+          }
+        }
+        element.className = arr1.join(" ");
+      }
+
+      // Add active class to the current control button (highlight it)
+      var btnContainer = document.getElementById("myBtnContainer");
+      var btns = btnContainer.getElementsByClassName("btn");
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener("click", function() {
+          var current = document.getElementsByClassName("active");
+          current[0].className = current[0].className.replace(" active", "");
+          this.className += " active";
+        });
+      }
+    </script>
+  </body>
+</html>

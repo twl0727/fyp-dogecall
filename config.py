@@ -1,0 +1,6 @@
+customhost = "dogecall.cwrriox6nex9.us-east-1.rds.amazonaws.com"
+customuser = "root"
+custompass = "rootroot"
+customdb = "dogecall"
+custombucket =  "twl-dogecall"
+customregion = "us-east-1"

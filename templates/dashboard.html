@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>DogeCall Telco</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="./static/images/dogecall-logo.png"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Raleway"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      body,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: "Raleway", sans-serif;
+      }
+      a {
+        color: white;
+        text-decoration: none;
+      }
+      a:hover {
+        color: rgb(255, 245, 106);
+      }
+      .column {
+        float: left;
+        width: 33.33%;
+        padding: 5px;
+      }
+
+      /* Clear floats after image containers */
+      .row::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+    </style>
+  </head>
+  <body class="w3-light-grey w3-content" style="max-width: 1600px">
+    <!-- Sidebar/menu -->
+    <nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
+      <div class="w3-container">
+        <a href="#" onclick="w3_close()" class="w3-hide-large w3-right w3-padding w3-hover-grey" title="close menu">
+          <i class="fa fa-remove"></i>
+        </a><br><br>
+        <div class="row">
+          <div class="column">
+            <img src="../static/images/dogecall-logo.png" alt="DogeCall Logo" style="width:100%">
+          </div>
+          <div class="column">
+            <h1 style="width:100%; font-weight: bolder;">DogeCall</h1>
+          </div>
+        </div>
+        <hr>
+        {% if img_url != null %}
+        <img src="{{ img_url }}" alt="User Profile Picture" style="width:50%;">
+        {% else %}
+        <img src="./static/images/default-profile-pic.png" alt="User Profile Picture" style="width:50%;" >
+        {% endif %}
+        <br /><br />
+        <h4 class="welcome-msg">Welcome {{ session["displayName"] }}</h4>
+      </div>
+      <div class="w3-bar-block">
+        <a href="/dashboard" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-th-large fa-fw w3-margin-right"></i>DASHBOARD</a> 
+        <a href="/userProfile" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user fa-fw w3-margin-right"></i>PROFILE</a> 
+        <a href="/segmentation" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">CUSTOMER SEGMENTATION</a>
+        <a href="/prediction" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">CUSTOMER CHURN PREDICTION</a>
+        <a href="/sentiment" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">SENTIMENT ANALYSIS</a><br><br>
+        <a href="/signOut" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"></i>Sign Out</a> 
+      </div>
+    </nav>
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div
+      class="w3-overlay w3-hide-large w3-animate-opacity"
+      onclick="w3_close()"
+      style="cursor: pointer"
+      title="close side menu"
+      id="myOverlay"
+    ></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left: 300px">
+      <!-- Header -->
+      <header id="portfolio">
+        <span class="w3-button w3-hide-large w3-xxlarge w3-hover-text-grey" onclick="w3_open()"><i class="fa fa-bars"></i></span> 
+        <div class="w3-container w3-bottombar w3-margin-bottom w3-center">
+          <h1><b>Dashboard</b></h1>
+          <p>Get an overview of the customers!</p>
+        </div>
+      </header>
+
+      <!-- Pagination -->
+      <div class="w3-center w3-padding-32">
+        <iframe title="s1" width="1200" height="675" src="https://app.powerbi.com/reportEmbed?reportId=3bb9df59-d111-4c6d-813b-216b3633c3b2&autoAuth=true&ctid=abf4ac4d-99b9-4c29-aa08-11f03e2c7500&navContentPaneEnabled=false" frameborder="0" allowFullScreen="true"></iframe>
+      </div>
+     
+      <!-- Contact Section -->
+      <div
+        class="w3-container w3-padding-large"
+        style="background-color: #edeae6"
+      >
+        <h4 id="contact"><b>Contact The Admin</b></h4>
+        <p>
+          Encounter some problem with DogeCall Employee System? Don't hesitate
+          to contact us.
+        </p>
+        <div
+          class="w3-row-padding w3-center w3-padding-24"
+          style="margin: 0 -16px; color: white"
+        >
+          <div class="w3-third" style="background-color: #7f7b74">
+            <p><i class="fa fa-envelope w3-xxlarge w3-text-light-grey"></i></p>
+            <p>
+              <a href="mailto: dogecall_telco@gmail.com"
+                >dogecall_telco@gmail.com</a
+              >
+            </p>
+          </div>
+          <div class="w3-third" style="background-color: #beb1a9;">
+            <p>
+              <i class="fa fa-map-marker w3-xxlarge w3-text-light-grey"></i>
+            </p>
+            <p>Kuala Lumpur, Malaysia</p>
+          </div>
+          <div class="w3-third" style="background-color: #7f7b74">
+            <p><i class="fa fa-phone w3-xxlarge w3-text-light-grey"></i></p>
+            <p><a href="tel:+603-6587 7433">03-6587 7433</a></p>
+          </div>
+        </div>
+        <hr class="w3-opacity" />
+      </div>
+
+      <!-- Footer -->
+      <footer
+        class="w3-container w3-padding-32" style="background-color: #dbd9d5">
+        <div class="w3-third">
+          <h3>ABOUT US</h3>
+          <p>
+            DogeCall is a Telcommunication Company specializing in providing
+            subscription service to customers with privilleged member benefits.
+          </p>
+        </div>
+
+        <div>
+          <h3>POPULAR TAGS</h3>
+          <p>
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#ShibaInu</span
+            >
+            <span class="w3-tag w3-grey w3-small w3-margin-bottom"
+              >#DogeCall</span
+            >
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#Elon Musk</span
+            >
+            <span class="w3-tag w3-grey w3-small w3-margin-bottom">#Telco</span>
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#CustomerDashboards</span
+            >
+            <span class="w3-tag w3-grey w3-small w3-margin-bottom"
+              >#ExpandBusiness</span
+            >
+            <span class="w3-tag w3-white w3-small w3-margin-bottom"
+              >#LoveYourCustomers</span
+            >
+          </p>
+        </div>
+      </footer>
+
+      <div
+        class="w3-center w3-padding-16"
+        style="background-color: #2e2a26; color: white"
+      >
+        <b>Brought to you by: </b> Data Science FYP Project
+      </div>
+
+      <!-- End page content -->
+    </div>
+
+    <script>
+      // Script to open and close sidebar
+      function w3_open() {
+        document.getElementById("mySidebar").style.display = "block";
+        document.getElementById("myOverlay").style.display = "block";
+      }
+
+      function w3_close() {
+        document.getElementById("mySidebar").style.display = "none";
+        document.getElementById("myOverlay").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
