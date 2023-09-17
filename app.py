@@ -30,7 +30,7 @@ auth = firebase.auth()
 storage = firebase.storage()
 
 db = mysql.connector.connect(
-    host = "dogecall.cwrriox6nex9.us-east-1.rds.amazonaws.com",
+    host = "127.0.0.1",
     port = 3306,
     database = "dogecall",
     user = "root",
