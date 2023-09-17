@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 from sklearn import preprocessing
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-application = Flask(__name__, template_folder='./templates',
+app = Flask(__name__, template_folder='./templates',
             static_folder='static', static_url_path='/static')
 
 app.config["SESSION_PERMANENT"] = False
