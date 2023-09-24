@@ -164,14 +164,17 @@
       <div id="content">
         <img src=".\static\images\sentiment.png" alt="Sentiment Picture" style="width:80%; height:80%; margin-left: 10%; margin-right: 10%;">
       
-        <form action="/sentiment" method="POST" enctype="multipart/form-data" id="textbox">
-          <input type="text" name="text" placeholder="Enter...">
-          <button class="w3-button w3-black w3-margin-bottom w3-margin-top" type="submit">Analyze</button>
+        <div id="align">
+          <form action="/sentiment" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".xlsx,.xls,.csv"><br>
+            <button class="w3-button w3-black w3-margin-bottom w3-margin-top" type="submit" style="margin-left: 5%;">Upload and Predict</button>
         </form>
       
         <div id="answer">
           {% if sentiment %}
-            <h1>{{sentiment}}</h1>
+            <a href="{{ url_for('download_sentiment', filename='sentiment.xlsx') }}" download>
+              <button>Download new Excel File</button> <br><br>
+            </a> 
           {% endif %}
         </div>
       </div>
