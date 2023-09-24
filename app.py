@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 
 from sklearn import preprocessing
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 app = Flask(__name__, template_folder='./templates',
             static_folder='static', static_url_path='/static')
@@ -23,14 +23,14 @@ firebase = pyrebase.initialize_app({
     "authDomain": "dogecall-ef1a1.firebaseapp.com",
     "databaseURL": "https://dogecall-ef1a1.firebaseio.com ",
     "storageBucket": "dogecall-ef1a1.appspot.com",
-    "serviceAccount": "./dogecall-web/json/serviceAccountKey.json"
+    "serviceAccount": "./json/serviceAccountKey.json"
 })
 
 auth = firebase.auth()
 storage = firebase.storage()
 
 db = mysql.connector.connect(
-    host = "localhost",
+    host = "dogecall.cwrriox6nex9.us-east-1.rds.amazonaws.com",
     port = 3306,
     database = "dogecall",
     user = "root",
@@ -52,15 +52,15 @@ def write_to_mysql(dataframe, connection, table_name):
         connection.commit()
 
 #load all models
-pickle_path = ('./dogecall-web/models/churnerModel.pkl')
+pickle_path = ('./models/churnerModel.pkl')
 with open(pickle_path, 'rb') as f:
     churners_segm_model = pickle.load(f)
 
-pickle_path = ('./dogecall-web/models/nonChurnerModel.pkl')
+pickle_path = ('./models/nonChurnerModel.pkl')
 with open(pickle_path, 'rb') as f:
     non_churners_segm_model = pickle.load(f)
 
-pickle_path = ('./dogecall-web/models/predict.pkl')
+pickle_path = ('./models/predict.pkl')
 with open(pickle_path, 'rb') as f:
     pred_model = pickle.load(f)
 
@@ -292,7 +292,7 @@ def prediction():
                             'Total Charges': 'TotalCharges',
                             }, inplace=True)
         
-        df.to_excel('./dogecall-web/predictions/churnPrediction.xlsx', index=False) 
+        df.to_excel('./predictions/churnPrediction.xlsx', index=False) 
 
         #write data to mysql server
         write_to_mysql(df, db, 'customer')
@@ -330,7 +330,7 @@ def sentiment():
             sentiment_df = pd.concat([sentiment_df, result_df], ignore_index=True)
 
         sentiment_df = sentiment_df[['Tweet', 'Vader_Polarity', 'Vader_Sentiment', 'Vader_Compound']]
-        sentiment_df.to_excel('./dogecall-web/predictions/sentiment.xlsx', index=False) 
+        sentiment_df.to_excel('./predictions/sentiment.xlsx', index=False) 
         
         return render_template('sentiment.html',img_url = img_url, sentiment = vader_sentiment)
     
