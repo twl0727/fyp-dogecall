@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 
 from sklearn import preprocessing
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 app = Flask(__name__, template_folder='./templates',
             static_folder='static', static_url_path='/static')
@@ -294,7 +294,7 @@ def prediction():
         df.to_excel('./predictions/churnPrediction.xlsx', index=False) 
 
         #write data to mysql server
-        write_to_mysql(df, db, 'customer')
+        write_to_mysql(df, db, 'Customer')
         print("The customer data successfully uploaded to server.")
 
         return render_template('prediction.html', img_url=img_url, predictions = predict_result)
