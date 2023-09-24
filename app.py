@@ -295,7 +295,7 @@ def prediction():
         df.to_excel('./predictions/churnPrediction.xlsx', index=False) 
 
         #write data to mysql server
-        write_to_mysql(df, db, 'customer')
+        write_to_mysql(df, db, 'Customer')
         print("The customer data successfully uploaded to server.")
 
         return render_template('prediction.html', img_url=img_url, predictions = predict_result)
@@ -331,7 +331,7 @@ def sentiment():
 
         sentiment_df = sentiment_df[['Tweet', 'Vader_Polarity', 'Vader_Sentiment', 'Vader_Compound']]
         sentiment_df.to_excel('./predictions/sentiment.xlsx', index=False) 
-        
+                
         return render_template('sentiment.html',img_url = img_url, sentiment = vader_sentiment)
     
     return render_template('sentiment.html', img_url = img_url)
