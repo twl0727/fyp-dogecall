@@ -26,7 +26,7 @@ firebase = pyrebase.initialize_app({
     "messagingSenderId": "176015227359",
     "appId": "1:176015227359:web:f6d76c9c3f1bea204eec6a",
     "databaseURL" : "https://dogecall-telco-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    "serviceAccount": "serviceAccountKey.json"
+    "serviceAccount": "./json/serviceAccountKey.json"
 })
 auth = firebase.auth()
 storage = firebase.storage()
