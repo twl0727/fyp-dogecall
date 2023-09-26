@@ -19,13 +19,15 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 firebase = pyrebase.initialize_app({
-    "apiKey": "AIzaSyA_S4OHs34DWj3UM7t4eus6QynKBQnwqg0",
-    "authDomain": "dogecall-ef1a1.firebaseapp.com",
-    "databaseURL": "https://dogecall-ef1a1.firebaseio.com ",
-    "storageBucket": "dogecall-ef1a1.appspot.com",
-    "serviceAccount": "./json/serviceAccountKey.json"
+    "apiKey": "AIzaSyC5fhshmYHOQ6jF_CwJJUvMtITlHRm4_SY",
+    "authDomain": "dogecall-telco.firebaseapp.com",
+    "projectId": "dogecall-telco",
+    "storageBucket": "dogecall-telco.appspot.com",
+    "messagingSenderId": "176015227359",
+    "appId": "1:176015227359:web:f6d76c9c3f1bea204eec6a",
+    "databaseURL" : "https://dogecall-telco-default-rtdb.asia-southeast1.firebasedatabase.app/",
+    "serviceAccount": "serviceAccountKey.json"
 })
-
 auth = firebase.auth()
 storage = firebase.storage()
 
@@ -101,7 +103,7 @@ def downloadProfilePic():
     userID = session["uid"]
 
     #download user profile pic
-    accessToken = '28095d8a-b3d1-49af-a319-76ed2cc27512'
+    accessToken = 'cbb01814-1a55-47be-94be-7e5266621376'
     return storage.child(userID).get_url(accessToken)
 
 @app.route("/dashboard")
