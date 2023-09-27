@@ -134,7 +134,58 @@ def userProfile():
 
     return render_template('user-profile.html', img_url=img_url)
 
-#segmentation modelling
+#telco package recommender
+@app.route("/recommender",  methods=['GET', 'POST'])
+def recommender():
+    img_url = downloadProfilePic()
+    
+    if request.method == 'POST':
+        file = request.files['file']
+        customer_df = pd.read_excel(file)
+
+        #available packages
+        telco_packages = np.array([[1, 2, 1, 1, 1, 1, 1, 1],
+                                [1, 1, 0, 0, 0, 0, 0, 0],
+                                [1, 0, 0, 0, 0, 0, 0, 0],
+                                [1, 1, 0, 0, 0, 0, 2, 2],
+                                [1, 1, 0, 2, 2, 0, 2, 2],
+                                [1, 0, 2, 2, 2, 2, 2, 2]])
+        
+        package_dict = {0: "Package 1",
+                        1: "Package 2",
+                        2: "Package 3",
+                        3: "Package 4",
+                        4: "Package 5",
+                        5: "Package 6"}
+
+        telco_services = ['Phone Service', 'Internet Service', 'Online Security', 
+                          'Online Backup', 'Device Protection', 'Tech Support', 'Streaming TV', 
+                          'Streaming Movies']
+        
+        user_profile_arr = customer_df[telco_services].values
+
+        #calculate the similarity
+        recomm_packages = []
+        for user in user_profile_arr:
+            cosine = np.dot(telco_packages,user)/(norm(telco_packages)*norm(user))
+            #get the package name of the highest similarity
+            recomm_package = package_dict.get(np.argmax(cosine))
+            recomm_packages.append(recomm_package)
+
+        #append to data
+        customer_df['Recommended Package'] = recomm_packages
+
+        #drop cols
+        customer_df.drop(telco_services, axis=1, inplace=True)
+
+        customer_df.to_excel('./packages/recommPackages.xlsx', index=False) 
+        customer_html = customer_df.to_html(classes='data')
+
+        return render_template('recommender.html', img_url=img_url,  customerTable=customer_html)
+    
+    return render_template('recommender.html', img_url=img_url)
+
+#segmentation modeling
 @app.route("/segmentation",  methods=['GET', 'POST'])
 def segmentation():
     img_url = downloadProfilePic()
@@ -144,23 +195,28 @@ def segmentation():
     #segmentation for churner customers
     if request.method == 'POST' and request.form["type"] == 'segChurnersData':
         file = request.files['file']
-        churners_df = pd.read_excel(file)
+        ori_churners_df = pd.read_excel(file)
+        churners_df = ori_churners_df[selected_columns]
 
         #segment customers
-        churners_agg_labels = churners_segm_model.fit_predict(churners_df[selected_columns])
-        churners_df['Clusters'] = churners_agg_labels
+        pca = PCA(n_components=2)
+        pca.fit(churners_df)
+        churners_scores_pca = pca.transform(churners_df)
+        churners_segm_model.fit(churners_scores_pca)
+
+        #concat clusters label into df
+        ori_churners_df['Clusters'] = churners_segm_model.labels_
 
         #renaming the cluster names
         churners_cluster_mapping = {0: 'The Economical Explorer',
                                     1: 'The Loyal High-Value Enthusiasts',
                                     2: 'The Short-Lived Moderate Spenders'}
         
-        churners_df['Clusters'] = churners_df['Clusters'].replace(churners_cluster_mapping)
+        ori_churners_df['Clusters'] = ori_churners_df['Clusters'].replace(churners_cluster_mapping)
 
         #fetch all churners data to update the cluster CLTV
         sql_churners_df = pd.read_sql('SELECT * FROM churnersdata', con=db)
-
-        print(sql_churners_df)
+        #print(sql_churners_df)
         
         churner_cltv_0 = sql_churners_df[sql_churners_df['Clusters'] == 'The Economical Explorer']['ClusterCLTV']
         churner_cltv_1 = sql_churners_df[sql_churners_df['Clusters'] == 'The Loyal High-Value Enthusiasts']['ClusterCLTV']
@@ -171,26 +227,27 @@ def segmentation():
         
         # update the "ClusterCLTV" column with the desired value for each clusters
         for name,cltv in zip(cluster_names,churners_cltv):
-            churners_df.loc[churners_df["Clusters"] == name, "ClusterCLTV"] = cltv
+            ori_churners_df.loc[ori_churners_df["Clusters"] == name, "ClusterCLTV"] = cltv
 
-        churners_df.rename(columns={'Monthly Charges': 'MonthlyCharges',
-                            'Tenure Months': 'TenureMonths',
-                            }, inplace=True)
+        ori_churners_df.rename(columns={'Recommended Package':'RecommendedPackage',
+                                    'Monthly Charges': 'MonthlyCharges',
+                                    'Tenure Months': 'TenureMonths',
+                                    }, inplace=True)
         
         #write data to mysql server
-        write_to_mysql(churners_df, db, 'churnersdata')
+        write_to_mysql(ori_churners_df, db, 'churnersdata')
         print("New Customer Data Successfully Uploaded to server and segmented.")
 
-        churners_df.to_excel('./segmentations/segChurners.xlsx', index=False) 
-        churners_html = churners_df.to_html(classes='data')
+        ori_churners_df.to_excel('./segmentations/segChurners.xlsx', index=False) 
+        churners_html = ori_churners_df.to_html(classes='data')
 
         return render_template('segmentation.html', img_url=img_url,  churnerTable=churners_html)
 
     #segmentation for non-churner customers
     elif request.method == 'POST' and request.form["type"] == 'segNonChurnersData':
         file = request.files['file']
-        non_churners_df = pd.read_excel(file)
-        non_churners_df = non_churners_df[selected_columns]
+        ori_non_churners_df = pd.read_excel(file)
+        non_churners_df = ori_non_churners_df[selected_columns]
 
         #segment customers
         pca = PCA(n_components=2)
@@ -198,10 +255,8 @@ def segmentation():
         non_churners_scores_pca = pca.transform(non_churners_df)
         non_churners_segm_model.fit(non_churners_scores_pca)
 
-        #concat clusters label and components into df
-        pca_kmeans_non_churners_df = pd.concat([non_churners_df.reset_index(drop=True), pd.DataFrame(non_churners_scores_pca)], axis=1)
-        pca_kmeans_non_churners_df.columns.values[-2:] = ['Component 1', 'Component 2']
-        pca_kmeans_non_churners_df['Clusters'] = non_churners_segm_model.labels_
+        #concat clusters label into df
+        ori_non_churners_df['Clusters'] = non_churners_segm_model.labels_
 
         #renaming the cluster names
         non_churners_cluster_mapping = {0: 'The Premium Lifers',
@@ -209,12 +264,11 @@ def segmentation():
                                         2: 'The Moderate Users',
                                         3: 'The Seasoned Explorers'}
     
-        pca_kmeans_non_churners_df['Clusters'] = pca_kmeans_non_churners_df['Clusters'].replace(non_churners_cluster_mapping)
+        ori_non_churners_df['Clusters'] = ori_non_churners_df['Clusters'].replace(non_churners_cluster_mapping)
 
         #fetch all churners data to update the cluster CLTV
         sql_non_churners_df = pd.read_sql('SELECT * FROM nonChurnersdata', con=db)
-
-        print(sql_non_churners_df)
+        #print(sql_non_churners_df)
         
         non_churner_cltv_0 = sql_non_churners_df[sql_non_churners_df['Clusters'] == 'The Premium Lifers']['ClusterCLTV']
         non_churner_cltv_1 = sql_non_churners_df[sql_non_churners_df['Clusters'] == 'The Budget Conscious']['ClusterCLTV']
@@ -226,20 +280,21 @@ def segmentation():
         
         # update the "ClusterCLTV" column with the desired value for each clusters
         for name,cltv in zip(cluster_names,non_churners_cltv):
-            pca_kmeans_non_churners_df.loc[pca_kmeans_non_churners_df["Clusters"] == name, "ClusterCLTV"] = cltv
+            ori_non_churners_df.loc[ori_non_churners_df["Clusters"] == name, "ClusterCLTV"] = cltv
 
-        pca_kmeans_non_churners_df.rename(columns={'Monthly Charges': 'MonthlyCharges',
-                            'Tenure Months': 'TenureMonths',
-                            'Component 1': 'Component1',
-                            'Component 2': 'Component2',
-                            }, inplace=True)
+        ori_non_churners_df.rename(columns={'Recommended Package':'RecommendedPackage',
+                                                    'Monthly Charges': 'MonthlyCharges',
+                                                    'Tenure Months': 'TenureMonths'
+                                                    }, inplace=True)
+        
+        print(ori_non_churners_df)
         
         #write data to mysql server
-        write_to_mysql(pca_kmeans_non_churners_df, db, 'nonChurnersdata')
+        write_to_mysql(ori_non_churners_df, db, 'nonChurnersdata')
         print("New Customer Data Successfully Uploaded to server and segmented.")
 
-        pca_kmeans_non_churners_df.to_excel('./segmentations/nonSegChurners.xlsx', index=False) 
-        non_churners_html = pca_kmeans_non_churners_df.to_html(classes='data')
+        ori_non_churners_df.to_excel('./segmentations/nonSegChurners.xlsx', index=False) 
+        non_churners_html = ori_non_churners_df.to_html(classes='data')
 
         return render_template('segmentation.html', img_url=img_url,  nonChurnerTable=non_churners_html)
 
@@ -338,6 +393,11 @@ def sentiment():
     
     return render_template('sentiment.html', img_url = img_url)
 
+#app route for excel file downloads
+@app.route('/downloadRecommPackages')
+def download_recommendedPackages():
+    return send_file('./packages/recommPackages.xlsx', as_attachment=True)
+            
 #app route for excel file downloads
 @app.route('/downloadSegChurners')
 def download_segChurners():
