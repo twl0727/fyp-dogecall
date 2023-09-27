@@ -4,6 +4,7 @@ import mysql.connector
 from flask import Flask, render_template, request, redirect, session, send_file
 from flask_session import Session
 
+import numpy as np
 import pickle
 import pandas as pd
 from sklearn.decomposition import PCA
