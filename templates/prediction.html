@@ -90,6 +90,48 @@
         margin-right: 40%;
         align-content: center;
       }
+      .button-23 {
+        background-color: #FFFFFF;
+        border: 1px solid #222222;
+        border-radius: 8px;
+        box-sizing: border-box;
+        color: #222222;
+        cursor: pointer;
+        display: inline-block;
+        font-family: Circular,-apple-system,BlinkMacSystemFont,Roboto,"Helvetica Neue",sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 20px;
+        margin: 0;
+        outline: none;
+        padding: 13px 23px;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        touch-action: manipulation;
+        transition: box-shadow .2s,-ms-transform .1s,-webkit-transform .1s,transform .1s;
+        user-select: none;
+        -webkit-user-select: none;
+        width: auto;
+      }
+      
+      .button-23:focus-visible {
+        box-shadow: #222222 0 0 0 2px, rgba(255, 255, 255, 0.8) 0 0 0 4px;
+        transition: box-shadow .2s;
+      }
+      
+      .button-23:active {
+        background-color: #F7F7F7;
+        border-color: #000000;
+        transform: scale(.96);
+      }
+      
+      .button-23:disabled {
+        border-color: #DDDDDD;
+        color: #DDDDDD;
+        cursor: not-allowed;
+        opacity: 1;
+      }
     </style>
   </head>
   <body class="w3-light-grey w3-content" style="max-width: 1600px">
@@ -119,6 +161,7 @@
       <div class="w3-bar-block">
         <a href="/dashboard" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-th-large fa-fw w3-margin-right"></i>DASHBOARD</a> 
         <a href="/userProfile" onclick="w3_close()" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user fa-fw w3-margin-right"></i>PROFILE</a> 
+        <a href="/recommender" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">TELCO PACKAGES RECOMMENDER</a>
         <a href="/segmentation" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">CUSTOMER SEGMENTATION</a>
         <a href="/prediction" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">CUSTOMER CHURN PREDICTION</a>
         <a href="/sentiment" onclick="w3_close()" class="w3-bar-item w3-button w3-padding">SENTIMENT ANALYSIS</a><br><br>
@@ -154,20 +197,19 @@
             <td>In the world of subscription-based businesses, keeping a close eye on churn rates is crucial. On average, a yearly churn rate falling between 5-7% is considered typical. In terms of monthly churn, maintaining a rate of around 3% is a positive sign! Nonetheless, it's important to remember that the ideal churn rate can vary significantly based on your specific market and industry.</td>
           </tr>
         </table>
-        <div id="align">
+  
           <form action="/prediction" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".xlsx,.xls,.csv"><br>
-            <button class="w3-button w3-black w3-margin-bottom w3-margin-top" type="submit" style="margin-left: 5%;">Upload and Predict</button>
+            <input type="file" class="button-23" name="file" accept=".xlsx,.xls,.csv" style="margin-left: 35%;"><br><br> 
+            <button class="button-23" type="submit" style="margin-left: 43%;">Upload and Predict</button> <br><br> 
           </form>
 
           <div id="answer">
             {% if predictions %}
               <a href="{{ url_for('download_predictions', filename='churnPrediciton.xlsx') }}" download>
-                <button>Download new Excel File</button> <br><br>
+                <button class="button-23"  style="margin-left:41.25%">Download new Excel File</button> <br><br>
               </a> 
             {% endif %}
           </div>
-        </div>
       </div>
       <!-- Contact Section -->
       <div
