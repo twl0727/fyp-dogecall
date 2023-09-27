@@ -215,21 +215,6 @@ def segmentation():
         
         ori_churners_df['Clusters'] = ori_churners_df['Clusters'].replace(churners_cluster_mapping)
 
-        #fetch all churners data to update the cluster CLTV
-        sql_churners_df = pd.read_sql('SELECT * FROM churnersdata', con=db)
-        #print(sql_churners_df)
-        
-        churner_cltv_0 = sql_churners_df[sql_churners_df['Clusters'] == 'The Economical Explorer']['ClusterCLTV']
-        churner_cltv_1 = sql_churners_df[sql_churners_df['Clusters'] == 'The Loyal High-Value Enthusiasts']['ClusterCLTV']
-        churner_cltv_2 = sql_churners_df[sql_churners_df['Clusters'] == 'The Short-Lived Moderate Spenders']['ClusterCLTV']
-
-        churners_cltv =[churner_cltv_0.iloc[0], churner_cltv_1.iloc[0], churner_cltv_2.iloc[0]]
-        cluster_names = ['The Economical Explorer', 'The Loyal High-Value Enthusiasts', 'The Short-Lived Moderate Spenders']
-        
-        # update the "ClusterCLTV" column with the desired value for each clusters
-        for name,cltv in zip(cluster_names,churners_cltv):
-            ori_churners_df.loc[ori_churners_df["Clusters"] == name, "ClusterCLTV"] = cltv
-
         ori_churners_df.rename(columns={'Recommended Package':'RecommendedPackage',
                                     'Monthly Charges': 'MonthlyCharges',
                                     'Tenure Months': 'TenureMonths',
@@ -266,22 +251,6 @@ def segmentation():
                                         3: 'The Seasoned Explorers'}
     
         ori_non_churners_df['Clusters'] = ori_non_churners_df['Clusters'].replace(non_churners_cluster_mapping)
-
-        #fetch all churners data to update the cluster CLTV
-        sql_non_churners_df = pd.read_sql('SELECT * FROM nonChurnersdata', con=db)
-        #print(sql_non_churners_df)
-        
-        non_churner_cltv_0 = sql_non_churners_df[sql_non_churners_df['Clusters'] == 'The Premium Lifers']['ClusterCLTV']
-        non_churner_cltv_1 = sql_non_churners_df[sql_non_churners_df['Clusters'] == 'The Budget Conscious']['ClusterCLTV']
-        non_churner_cltv_2 = sql_non_churners_df[sql_non_churners_df['Clusters'] == 'The Moderate Users']['ClusterCLTV']
-        non_churner_cltv_3 = sql_non_churners_df[sql_non_churners_df['Clusters'] == 'The Seasoned Explorers']['ClusterCLTV']
-
-        non_churners_cltv =[non_churner_cltv_0.iloc[0], non_churner_cltv_1.iloc[0], non_churner_cltv_2.iloc[0], non_churner_cltv_3.iloc[0]]
-        cluster_names = ['The Premium Lifers', 'The Budget Conscious', 'The Moderate Users', 'The Seasoned Explorers']
-        
-        # update the "ClusterCLTV" column with the desired value for each clusters
-        for name,cltv in zip(cluster_names,non_churners_cltv):
-            ori_non_churners_df.loc[ori_non_churners_df["Clusters"] == name, "ClusterCLTV"] = cltv
 
         ori_non_churners_df.rename(columns={'Recommended Package':'RecommendedPackage',
                                                     'Monthly Charges': 'MonthlyCharges',
