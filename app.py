@@ -409,7 +409,7 @@ def download_nonSegChurners():
 
 @app.route('/download/predictions')
 def download_predictions():
-    return send_file('.\\predictions\\churnPrediction.xlsx', as_attachment=True)
+    return send_file('./predictions/churnPrediction.xlsx', as_attachment=True)
 
 @app.route('/download/sentiment')
 def download_sentiment():
