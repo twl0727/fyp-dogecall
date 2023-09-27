@@ -179,8 +179,6 @@ def recommender():
 
         #drop cols
         customer_df.drop(telco_services, axis=1, inplace=True)
-
-        customer_df.to_excel('./packages/recommPackages.xlsx', index=False) 
         customer_html = customer_df.to_html(classes='data')
 
         return render_template('recommender.html', img_url=img_url,  customerTable=customer_html)
